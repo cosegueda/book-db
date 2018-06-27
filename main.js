@@ -16,11 +16,14 @@ const secondBook = {
 const options = ['View All Books', 'Add a Book', 'Edit a Book', 'Search for a Book', 'Save and Exit'];
 
 const consoleStyles = {
-    title: 'font-size: 16px;font-weight:bold;',
-    subtitle: 'font-weight:bold;'
+    title: 'font-size:16px;font-weight:bold;',
+    subtitle: 'font-size:14px;font-weight:bold;'
 };
 
 const books = JSON.parse(localStorage.getItem('books')) || [];
+
+let state;
+let initialLoad = true;
 
 
 /* View */
@@ -28,53 +31,94 @@ startApp();
 
 /* Functions */
 function startApp() {
+    state = 'default';
     console.log('%cBook Manager', consoleStyles.title);
-    if (!localStorage.books) {
-        console.log(`No books found. Adding initial book '${initialBook[0].title}' to library.`);
-        books.push(...initialBook);
-    } else {
-        console.log(`Loaded ${books.length} book${(books.length > 1) ? 's' : ''} into the library`)
+    if (initialLoad) {
+        if (!localStorage.books) {
+            console.log(`No books found. Adding initial book '${initialBook[0].title}' to library.`);
+            books.push(...initialBook);
+        } else {
+            console.log(`Loaded ${books.length} book${(books.length > 1) ? 's' : ''} into the library`)
+        }
     }
+    displayOptions();
+
+    window.addEventListener('keyup', filterInput);
+}
+
+function displayOptions() {
     options.forEach((option, index) => {
         const id = index + 1;
         console.log(`${id}) ${option}`);
     });
+}
 
-    window.addEventListener('keyup', (e) => {
-        if (e.key === 'Meta') {
-            return;
-        }
-        console.log(e.key);
-        if (e.key > 0 && e.key < 6) {
-            handleUserInput(e.key)
-        } else {
-            console.log('That is not a valid option, please try again (Choose 1-5)');
-        }
-    });
+function filterInput(e) {
+    if (e.key === 'Meta') {
+        return;
+    }
+    else if (Number.isInteger(parseInt(e.key)) || e.key === 'Enter') {
+        handleUserInput(e.key)
+    }
+    else {
+        console.log('That is not a valid option, please try again.');
+    }
 }
 
 function handleUserInput(key) {
-    switch (key) {
-        case '1':
-            viewAllBooks();
+    switch (state) {
+        case 'default':
+            if (key > 0 && key < 6) {
+                console.log(key);
+            }
+            switch (key) {
+                case '1':
+                    viewAllBooks();
+                    break;
+                case '2':
+                    addBook();
+                    break;
+                case '3':
+                    editBook();
+                    break;
+                case '4':
+                    searchBook();
+                    break;
+                case '5':
+                    exitApp();
+                    break;
+                default:
+                    console.log('That is not a valid option, please try again.');
+            }
             break;
-        case '2':
-            addBook();
-            break;
-        case '3':
-            editBook();
-            break;
-        case '4':
-            searchBook();
-            break;
-        case '5':
-            exitApp();
+        case 'viewAllBooks':
+            if (key === 'Enter') {
+                initialLoad = false;
+                startApp();
+            }
+            else {
+                let book = books.find(book => (book.id === parseInt(key)));
+                if (!book) {
+                    console.log('That is not a valid selection. Please try again.');
+                    break;
+                }
+                console.log(`ID: ${book.id}`);
+                console.log(`Title: ${book.title}`);
+                console.log(`Author: ${book.author}`);
+                console.log(`Description: ${book.description}`);
+                console.log('To view details enter the book ID, to return press <Enter>');
+            }
             break;
     }
 }
 
 function viewAllBooks() {
-    console.table(books);
+    state = 'viewAllBooks';
+    console.log('%cView All Books', consoleStyles.subtitle);
+    books.forEach((book) => {
+        console.log(`[${book.id}] ${book.title}`);
+    });
+    console.log('To view details enter the book ID, to return press <Enter>');
 }
 
 function addBook() {
