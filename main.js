@@ -102,15 +102,38 @@ function handleUserInput(key) {
                 console.log('To view details enter the book ID, to return press <Enter>');
             }
             break;
+        case 'editBook':
+            if (key === 'Enter') {
+                initialLoad = false;
+                startApp();
+            }
+            else {
+                let book = books.find(book => (book.id === parseInt(key)));
+                if (!book) {
+                    console.log('That is not a valid selection. Please try again.');
+                    break;
+                }
+                console.log('Input the following information. To leave a field unchanged, hit <Enter>');
+                book.title = prompt(`Title:`, book.title);
+                book.author = prompt(`Author:`, book.author);
+                book.description = prompt(`Description:`, book.description);
+                if (book.title === '' || book.author === '' || book.description === '' ) {
+                    console.log('Error: Book has not been changed. Fields cannot be left blank.')
+                }
+                else {
+                    books.push(book);
+                    console.log(`Book saved.`);
+                    editBook();
+                }
+            }
+            break;
     }
 }
 
 function viewAllBooks() {
     state = 'viewAllBooks';
     console.log('%cView All Books', consoleStyles.subtitle);
-    books.forEach((book) => {
-        console.log(`[${book.id}] ${book.title}`);
-    });
+    displayBookList();
     console.log('To view details enter the book ID, to return press <Enter>');
 }
 
@@ -121,15 +144,24 @@ function addBook() {
     book.title = prompt('Title:');
     book.author = prompt('Author:');
     book.description = prompt('Description:');
-    book.id = books.length + 1;
-    books.push(book);
-    console.log(`Book [${books.length}] added`);
+    if (book.title === '' || book.author === '' || book.description === '' ) {
+        console.log('Error: No book added. Fields cannot be left blank.')
+    }
+    else {
+        book.id = books.length + 1;
+        books.push(book);
+        console.log(`Book [${books.length}] added`);
+    }
     initialLoad = false;
     startApp();
 }
 
 function editBook() {
-    console.log('Book edited');
+    state = 'editBook';
+    console.log('%cEdit a Book', consoleStyles.subtitle);
+    displayBookList();
+    console.log('Enter the book ID of the book you want to edit, to return press <Enter>');
+
 }
 
 function searchBook() {
@@ -140,5 +172,11 @@ function exitApp() {
     localStorage.setItem('books', JSON.stringify(books));
     console.log('Library saved to local storage. Exiting...');
     window.removeEventListener('keyup', (e) => {}, false);
+}
+
+function displayBookList() {
+    books.forEach((book) => {
+        console.log(`[${book.id}] ${book.title}`);
+    });
 }
 
