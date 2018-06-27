@@ -6,13 +6,6 @@ const initialBook = [{
     description: 'A young scientist creates a grotesque but sapient creature in an unorthodox scientific experiment'
 }];
 
-const secondBook = {
-    id: 2,
-    title: 'Frankenstein2',
-    author: 'Mary Shelley2',
-    description: '2 young scientist creates a grotesque but sapient creature in an unorthodox scientific experiment'
-};
-
 const options = ['View All Books', 'Add a Book', 'Edit a Book', 'Search for a Book', 'Save and Exit'];
 
 const consoleStyles = {
@@ -122,8 +115,17 @@ function viewAllBooks() {
 }
 
 function addBook() {
-    books.push(secondBook);
-    console.log('Book added');
+    let book = {};
+    console.log('%cAdd a Book', consoleStyles.subtitle);
+    console.log('Please enter the following information:');
+    book.title = prompt('Title:');
+    book.author = prompt('Author:');
+    book.description = prompt('Description:');
+    book.id = books.length + 1;
+    books.push(book);
+    console.log(`Book [${books.length}] added`);
+    initialLoad = false;
+    startApp();
 }
 
 function editBook() {
