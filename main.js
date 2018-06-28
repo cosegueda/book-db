@@ -185,7 +185,6 @@ function searchBook() {
     state = 'searchBook';
     console.log('%cSearch for Book', consoleStyles.subtitle);
     let search = prompt('Type in one or more keywords to search for');
-    console.log('The following books matched your query. Enter the book ID to see more details, to return press <Enter>');
     if (search === '') {
         console.log('Error: Nothing to search. Field cannot be left blank.')
     }
@@ -194,9 +193,18 @@ function searchBook() {
             if (book.title.includes(search) || book.author.includes(search) || book.description.includes(search)) {
                 return book
             }
-        }).forEach(book => {
-            console.log(`[${book.id}] ${book.title}`);
-        })
+        });
+        if (results.length < 1) {
+            console.log('No books matched your search.');
+            initialLoad = false;
+            startApp();
+        }
+        else {
+            console.log('The following books matched your search. Enter the book ID to see more details, to return press <Enter>');
+            results.forEach(book => {
+                console.log(`[${book.id}] ${book.title}`);
+            });
+        }
     }
 }
 
