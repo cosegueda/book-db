@@ -127,13 +127,31 @@ function handleUserInput(key) {
                 }
             }
             break;
+        case 'searchBook':
+            if (key === 'Enter') {
+                initialLoad = false;
+                startApp();
+            }
+            else {
+                let book = books.find(book => (book.id === parseInt(key)));
+                if (!book) {
+                    console.log('That is not a valid selection. Please try again.');
+                    break;
+                }
+                console.log(`ID: ${book.id}`);
+                console.log(`Title: ${book.title}`);
+                console.log(`Author: ${book.author}`);
+                console.log(`Description: ${book.description}`);
+                console.log('To view details enter the book ID, to return press <Enter>');
+            }
+            break;
     }
 }
 
 function viewAllBooks() {
     state = 'viewAllBooks';
     console.log('%cView All Books', consoleStyles.subtitle);
-    displayBookList();
+    displayBookList(books);
     console.log('To view details enter the book ID, to return press <Enter>');
 }
 
@@ -159,22 +177,36 @@ function addBook() {
 function editBook() {
     state = 'editBook';
     console.log('%cEdit a Book', consoleStyles.subtitle);
-    displayBookList();
+    displayBookList(books);
     console.log('Enter the book ID of the book you want to edit, to return press <Enter>');
-
 }
 
 function searchBook() {
-    console.log('Book searched');
+    state = 'searchBook';
+    console.log('%cSearch for Book', consoleStyles.subtitle);
+    let search = prompt('Type in one or more keywords to search for');
+    console.log('The following books matched your query. Enter the book ID to see more details, to return press <Enter>');
+    if (search === '') {
+        console.log('Error: Nothing to search. Field cannot be left blank.')
+    }
+    else {
+        let results = books.filter(book => {
+            if (book.title.includes(search) || book.author.includes(search) || book.description.includes(search)) {
+                return book
+            }
+        }).forEach(book => {
+            console.log(`[${book.id}] ${book.title}`);
+        })
+    }
 }
 
 function exitApp() {
     localStorage.setItem('books', JSON.stringify(books));
     console.log('Library saved to local storage. Exiting...');
-    window.removeEventListener('keyup', (e) => {}, false);
+    window.removeEventListener('keyup', filterInput);
 }
 
-function displayBookList() {
+function displayBookList(books) {
     books.forEach((book) => {
         console.log(`[${book.id}] ${book.title}`);
     });
