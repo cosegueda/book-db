@@ -26,10 +26,10 @@ const StateMap = {
 let state, activeHandler;
 let initialLoad = true;
 
-startApp();
+viewMainMenu();
 
 /* Functions */
-function startApp() {
+function viewMainMenu() {
     clearInputHandler();
     state = StateMap[1];
     console.log('%cBook Manager', consoleStyles.title);
@@ -112,13 +112,12 @@ function addBook() {
         saveToLocalStorage(books);
         console.log(`Book [${books.length}] added`);
     }
-    startApp();
+    viewMainMenu();
 }
 
 function editBook() {
     clearInputHandler();
     state = StateMap[4]; // editBook
-    state = 'editBook';
     console.log('%cEdit a Book', consoleStyles.subtitle);
     displayBookList(books);
     console.log('Enter the book ID of the book you want to edit, to return press <Enter>');
@@ -146,7 +145,7 @@ function editBook() {
                 });
                 saveToLocalStorage(books);
                 console.log(`Book saved.`);
-                startApp();
+                viewMainMenu();
             }
         }
     });
@@ -169,7 +168,7 @@ function searchBooks() {
         });
         if (results.length < 1) {
             console.log('No books matched your search.');
-            startApp();
+            viewMainMenu();
         }
         else {
             console.log('The following books matched your search. Enter the book ID to see more details, to return press <Enter>');
@@ -207,11 +206,11 @@ function exitApp() {
 // Filters out all non-integer input, except 'Enter'
 function filterInput(input) {
     if (Number.isInteger(parseInt(input)) || input === 'Enter') {
-        // Returns user to mainMenu if 'Enter' key is hit while not on the mainMenu
+        // Returns user to viewMainMenu if 'Enter' key is hit while not on the mainMenu
         if (state !== StateMap[1]) {
             if (input === 'Enter') {
                 initialLoad = false;
-                startApp();
+                viewMainMenu();
             }
             else {
                 return input;
