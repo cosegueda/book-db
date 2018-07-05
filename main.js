@@ -26,6 +26,8 @@ const StateMap = {
 let state, activeHandler;
 let initialLoad = true;
 
+window.addEventListener('keyup', handleInput);
+
 viewMainMenu();
 
 /* Functions */
@@ -68,7 +70,7 @@ function viewMainMenu() {
                 break;
         }
     });
-    window.addEventListener('keyup', activeHandler);
+    // window.addEventListener('keyup', activeHandler);
 }
 
 function viewAllBooks() {
@@ -90,7 +92,7 @@ function viewAllBooks() {
             viewAllBooks();
         }
     });
-    window.addEventListener('keyup', activeHandler);
+    // window.addEventListener('keyup', activeHandler);
 }
 
 function addBook() {
@@ -149,7 +151,7 @@ function editBook() {
             }
         }
     });
-    window.addEventListener('keyup', activeHandler);
+    // window.addEventListener('keyup', activeHandler);
 }
 
 function searchBooks() {
@@ -187,8 +189,14 @@ function searchBooks() {
                     console.log('To view details enter the book ID, to return press <Enter>');
                 }
             });
-            window.addEventListener('keyup', activeHandler);
+            // window.addEventListener('keyup', activeHandler);
         }
+    }
+}
+
+function handleInput(e) {
+    if (activeHandler) {
+        activeHandler(e)
     }
 }
 
@@ -264,7 +272,7 @@ function registerInputHandler(handler) {
 }
 
 function clearInputHandler() {
-    window.removeEventListener('keyup', activeHandler);
+    activeHandler = null
 }
 
 function saveToLocalStorage(books) {
